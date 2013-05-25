@@ -21,7 +21,7 @@ Debugger: ```npm install -g node-inspector```
 
 ## Development Notes
 **Compiling JavaScript**  
-One-off: ``` browserify -c 'coffee -sc' frontend/scripts/application.coffee > public/scripts/zombie-game.js```
+One-off: ``` browserify -c 'coffee -sc' frontend/scripts/application.coffee > public/scripts/zombie-game.js```  
 NodeMon Auto Compilation: ```nodemon -w frontend/ -x "browserify -c 'coffee -sc' frontend/scripts/application.coffee > public/scripts/zombie-game.js"```
 
 **Compiling CSS**  
