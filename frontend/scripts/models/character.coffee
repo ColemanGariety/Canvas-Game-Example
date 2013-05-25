@@ -26,8 +26,8 @@ class Character extends BaseModel
 
 	equipWeapon: (p_weaponModel) ->
 		@weapon = p_weaponModel
-		@emit "character.weaponEquipped"
+		@emit "character.weapon.changed"
 
 	equipArmor: (p_armorModel) ->
 		@armorSlots
-		@emit "character.armorEquipped"
+		@emit "character.armor.changed"
