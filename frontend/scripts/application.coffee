@@ -17,4 +17,4 @@ class ZombieGame
 	startRenderLoop: ->
 
 
-window.ZombieGame = ZombieGame
+if window? then window.ZombieGame = ZombieGame else if module?.exports? then module.exports = ZombieGame
