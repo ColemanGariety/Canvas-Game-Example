@@ -23,7 +23,11 @@
 
   })();
 
-  window.ZombieGame = ZombieGame;
+  if (typeof window !== "undefined" && window !== null) {
+    window.ZombieGame = ZombieGame;
+  } else if ((typeof module !== "undefined" && module !== null ? module.exports : void 0) != null) {
+    module.exports = ZombieGame;
+  }
 
 }).call(this);
 
