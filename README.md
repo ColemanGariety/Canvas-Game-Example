@@ -8,11 +8,11 @@ Once the renderer, models, and game logic is in a playable state on the frontend
 
 ## Prerequisites
 **Required Global NPM Installs**  
-Coffee-Script: ```npm install -g coffee-script```
+Coffee-Script: ```npm install -g coffee-script```  
 JS Bundler: ```npm install -g browserify```
 
 **Optional Global NPM Installs**  
-File Watched: ```npm install -g node-mon```
+File Watched: ```npm install -g node-mon```  
 Debugger: ```npm install -g node-inspector```
 
 **Within Project Directory**  
