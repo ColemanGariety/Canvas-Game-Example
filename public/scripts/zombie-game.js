@@ -10,9 +10,9 @@
       this.stage = new createjs.Stage(p_canvasId);
       this.startRenderLoop();
       circle = new createjs.Shape();
-      circle.graphics.beginFill("red").drawCircle(0, 0, 50);
-      circle.x = 100;
-      circle.y = 100;
+      circle.graphics.beginFill("red").drawCircle(0, 0, 25);
+      circle.x = 25;
+      circle.y = 25;
       this.stage.addChild(circle);
       this.stage.update();
     }
@@ -28,6 +28,8 @@
   } else if ((typeof module !== "undefined" && module !== null ? module.exports : void 0) != null) {
     module.exports = ZombieGame;
   }
+
+  alert("foobar");
 
 }).call(this);
 

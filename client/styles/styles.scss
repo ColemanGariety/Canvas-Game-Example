@@ -1,0 +1,10 @@
+@import "reset";
+
+html, body {
+  overflow: hidden;
+}
+
+canvas {
+  -webkit-transform: translateZ(0);
+  vertical-align: top;
+}

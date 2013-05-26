@@ -50,10 +50,3 @@ a:link, a:visited, a:hover, a:active {
   font-size: inherit;
   font-weight: inherit;
   text-decoration: inherit; }
-
-html, body {
-  overflow: hidden; }
-
-canvas {
-  -webkit-transform: translateZ(0);
-  vertical-align: top; }
