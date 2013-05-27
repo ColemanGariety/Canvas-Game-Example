@@ -1,109 +1,136 @@
-class Game
-  constructor: (canvasId) ->
-    # Start the game
-    @stage = new createjs.Stage canvasId
-    console.log "Started the game."
+# Wait for resources to load
+document.body.onload = ->
+  class Game
+    constructor: (canvasId) ->
+      # Start the game
+      @stage = new createjs.Stage canvasId
+      console.log "Started the game."
 
-    # Initialize the world
-    @world = new createjs.Container()
-    @stage.addChild(@world)
+      # Initialize the world
+      @world = new createjs.Container()
+      @stage.addChild(@world)
 
-    # Players in the game
-    @players = []
+      # Players in the game
+      @players = []
 
-    # Size the canvas
-    resizeCanvas = =>
-      @stage.canvas.width = window.innerWidth
-      @stage.canvas.height = window.innerHeight
-      @stage.update()
-    resizeCanvas()
-    window.addEventListener 'resize', resizeCanvas
+      # Size the canvas
+      resizeCanvas = =>
+        @stage.canvas.width = window.innerWidth
+        @stage.canvas.height = window.innerHeight
 
-    # Render loop
-    createjs.Ticker.setFPS 30
-    createjs.Ticker.addEventListener "tick", =>
-      for player in @players
+        # Move the world
 
-        # Movement actions
-        if player.actions.movement.up == true
-          @world.y += 15
-        if player.actions.movement.down == true
-          @world.y -= 15
-        if player.actions.movement.left == true
-          @world.x += 15
-        if player.actions.movement.right == true
-          @world.x -= 15
+        # Move the player
+        if @players[0]
+          @players[0].bitmap.x = window.innerWidth / 2
+          @players[0].bitmap.y = window.innerHeight / 2
 
-      # Redraw
-      @stage.update()
+        # Redraw
+        @stage.update()
+      resizeCanvas()
+      window.addEventListener 'resize', resizeCanvas
 
-    # Weapon controls
-    document.oncontextmenu = (e) =>
-      e.preventDefault()
+      # Render loop
+      createjs.Ticker.setFPS 30
+      createjs.Ticker.addEventListener "tick", =>
+        for player in @players
 
-    # Movement controls
-    document.onkeydown = (e) =>
-      switch e.which
-        when 87 then game.players[0].actions.movement.up = true
-        when 83 then game.players[0].actions.movement.down = true
-        when 65 then game.players[0].actions.movement.left = true
-        when 68 then game.players[0].actions.movement.right = true
+          # Movement actions
+          if player.actions.movement.up == true
+            @world.y += 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
+          if player.actions.movement.down == true
+            @world.y -= 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
+          if player.actions.movement.left == true
+            @world.x += 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
+          if player.actions.movement.right == true
+            @world.x -= 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
 
-    document.onkeyup = (e) =>
-      switch e.which
-        when 87 then game.players[0].actions.movement.up = false
-        when 83 then game.players[0].actions.movement.down = false
-        when 65 then game.players[0].actions.movement.left = false
-        when 68 then game.players[0].actions.movement.right = false
+        # Redraw
+        @stage.update()
 
-class Player extends Game
-  constructor: (name, isPuppet) ->
-    @name = name || "Anon"
+      # Weapon controls
+      document.oncontextmenu = (e) =>
+        e.preventDefault()
 
-    console.log "#{@name} has joined."
+      # Movement controls
+      document.onkeydown = (e) =>
+        switch e.which
+          when 87 then @players[0].actions.movement.up = true
+          when 83 then @players[0].actions.movement.down = true
+          when 65 then @players[0].actions.movement.left = true
+          when 68 then @players[0].actions.movement.right = true
 
-    @isPuppet = isPuppet || false
+      document.onkeyup = (e) =>
+        switch e.which
+          when 87 then @players[0].actions.movement.up = false
+          when 83 then @players[0].actions.movement.down = false
+          when 65 then @players[0].actions.movement.left = false
+          when 68 then @players[0].actions.movement.right = false
 
-    @shape = new createjs.Shape()
-    @shape.graphics.beginFill("red").drawCircle(0, 0, 50)
-    @shape.x = window.innerWidth / 2
-    @shape.y = window.innerHeight / 2
-    @shape.regX = 50
-    @shape.regY = 50
+  class Player extends Game
+    constructor: (name, isPuppet) ->
+      @name = name || "Anon"
 
-    @actions =
-      movement:
-        up: false
-        down: false
-        left: false
-        right: false
+      console.log "#{@name} has joined."
 
-    if isPuppet
-      game.stage.addChild @shape
-    else
-      game.world.addChild @shape
+      @isPuppet = isPuppet || false
 
-    game.players.push(@)
+      @spritesheet = new createjs.SpriteSheet(
+        images: ["images/player.png"]
+        frames:
+          width: 100
+          height: 106
+        animations:
+          stand: [0]
+          run:
+            frames: [0, 1]
+            frequency: 2
+      )
 
-class Continent extends Game
-  constructor: (name) ->
-    @name = name || "Homeland"
+      @bitmap = new createjs.BitmapAnimation(@spritesheet)
 
-    @bitmap = new Image()
-    @bitmap.src = "images/grass.jpg"
+      if isPuppet
+        @bitmap.x = window.innerWidth / 2
+        @bitmap.y = window.innerHeight / 2
+      else
+        @bitmap.x = window.innerWidth / 2 + 100
+        @bitmap.y = window.innerHeight / 2 + 100
 
-    @shape = new createjs.Shape()
-    @shape.graphics.beginBitmapFill(@bitmap, "repeat").drawRect(0, 0, 4000, 4000)
+      @bitmap.gotoAndPlay("stand")
 
-    game.world.addChild(@shape);
+      @actions =
+        movement:
+          up: false
+          down: false
+          left: false
+          right: false
 
-# Start the game
-game = new Game("gameCanvas")
+      if isPuppet
+        game.stage.addChild @bitmap
+      else
+        game.world.addChild @bitmap
 
-# Adds the puppet
-new Continent()
-new Player("Jackson", true)
-new Player("Elliot", false)
+      game.players.push(@)
 
-# ?
-if window? then window.Game = Game else if module?.exports? then module.exports = Game
+  class Continent extends Game
+    constructor: (name) ->
+      @name = name || "Homeland"
+
+      @bitmap = new Image()
+      @bitmap.src = "images/grass.jpg"
+
+      @shape = new createjs.Shape()
+      @shape.graphics.beginBitmapFill(@bitmap, "repeat").drawRect(0, 0, 4000, 4000)
+
+      game.world.addChild(@shape);
+
+  # Start the game
+  game = new Game("gameCanvas")
+
+  # Adds some stuff to mess around with
+  new Continent()
+  new Player("Jackson", true)
+  new Player("Elliot", false)
+
+  # ?
+  if window? then window.Game = Game else if module?.exports? then module.exports = Game

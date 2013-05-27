@@ -57,3 +57,6 @@ html, body {
 canvas {
   -webkit-transform: translateZ(0);
   vertical-align: top; }
+
+img {
+  display: none; }
