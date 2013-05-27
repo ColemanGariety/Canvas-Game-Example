@@ -36,6 +36,14 @@ class Game
     createjs.Ticker.setFPS 30
     createjs.Ticker.addEventListener "tick", =>
       for player in @players
+        if player.actions.weapons.shooting.automatic == true
+          createjs.Sound.registerSound("audio/mp5.mp3", "automatic");
+          handleLoad = (event) ->
+            automaticInstance = createjs.Sound.play("automatic", "none", 0, 0, 1);
+          createjs.Sound.addEventListener("fileload", handleLoad);
+        else
+          delete automaticInstance
+
         # Movement actions
         if player.actions.movement.up == true
           if (@world.y + 15) > 0
@@ -45,6 +53,9 @@ class Game
           else
             @world.y += 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
         if player.actions.movement.down == true
+          # Animate running down
+          @players[0].bitmap.gotoAndPlay("run")
+
           if (@world.y - 15) < (-4000 + window.innerWidth)
             @players[0].bitmap.y += 15
           else if game.players[0].bitmap.y != window.innerHeight / 2
@@ -74,6 +85,14 @@ class Game
       e.preventDefault()
       createjs.Sound.play "/audio/reload.mp3"
 
+    document.onmousedown = (e) =>
+      switch e.which
+        when 1 then  @players[0].actions.weapons.shooting.automatic = true
+
+    document.onmouseup = (e) =>
+      switch e.which
+        when 1 then  @players[0].actions.weapons.shooting.automatic = false
+
     # Movement controls
     document.onkeydown = (e) =>
       switch e.which
@@ -85,7 +104,7 @@ class Game
     document.onkeyup = (e) =>
       switch e.which
         when 87 then @players[0].actions.movement.up = false
-        when 83 then @players[0].actions.movement.down = false
+        when 83 then @players[0].actions.movement.down = false; @players[0].bitmap.gotoAndStop("run")
         when 65 then @players[0].actions.movement.left = false
         when 68 then @players[0].actions.movement.right = false
 
@@ -106,7 +125,7 @@ class Player extends Game
         stand: [0]
         run:
           frames: [0, 1]
-          frequency: 2
+          frequency: 3
     )
 
     @bitmap = new createjs.BitmapAnimation(@spritesheet)
@@ -129,6 +148,10 @@ class Player extends Game
         down: false
         left: false
         right: false
+      weapons:
+        shooting:
+          automatic: false
+          manual: false
 
     if isPuppet
       game.stage.addChild @bitmap

@@ -26,10 +26,20 @@ Game = (function() {
     window.addEventListener('resize', resizeCanvas);
     createjs.Ticker.setFPS(30);
     createjs.Ticker.addEventListener("tick", function() {
-      var player, _i, _len, _ref;
+      var handleLoad, player, _i, _len, _ref;
       _ref = _this.players;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         player = _ref[_i];
+        if (player.actions.weapons.shooting.automatic === true) {
+          createjs.Sound.registerSound("audio/mp5.mp3", "automatic");
+          handleLoad = function(event) {
+            var automaticInstance;
+            return automaticInstance = createjs.Sound.play("automatic", "none", 0, 0, 1);
+          };
+          createjs.Sound.addEventListener("fileload", handleLoad);
+        } else {
+          delete automaticInstance;
+        }
         if (player.actions.movement.up === true) {
           if ((_this.world.y + 15) > 0) {
             _this.players[0].bitmap.y -= 15;
@@ -42,6 +52,7 @@ Game = (function() {
           }
         }
         if (player.actions.movement.down === true) {
+          _this.players[0].bitmap.gotoAndPlay("run");
           if ((_this.world.y - 15) < (-4000 + window.innerWidth)) {
             _this.players[0].bitmap.y += 15;
           } else if (game.players[0].bitmap.y !== window.innerHeight / 2) {
@@ -81,6 +92,18 @@ Game = (function() {
       e.preventDefault();
       return createjs.Sound.play("/audio/reload.mp3");
     };
+    document.onmousedown = function(e) {
+      switch (e.which) {
+        case 1:
+          return _this.players[0].actions.weapons.shooting.automatic = true;
+      }
+    };
+    document.onmouseup = function(e) {
+      switch (e.which) {
+        case 1:
+          return _this.players[0].actions.weapons.shooting.automatic = false;
+      }
+    };
     document.onkeydown = function(e) {
       switch (e.which) {
         case 87:
@@ -98,7 +121,8 @@ Game = (function() {
         case 87:
           return _this.players[0].actions.movement.up = false;
         case 83:
-          return _this.players[0].actions.movement.down = false;
+          _this.players[0].actions.movement.down = false;
+          return _this.players[0].bitmap.gotoAndStop("run");
         case 65:
           return _this.players[0].actions.movement.left = false;
         case 68:
@@ -129,7 +153,7 @@ Player = (function(_super) {
         stand: [0],
         run: {
           frames: [0, 1],
-          frequency: 2
+          frequency: 3
         }
       }
     });
@@ -150,6 +174,12 @@ Player = (function(_super) {
         down: false,
         left: false,
         right: false
+      },
+      weapons: {
+        shooting: {
+          automatic: false,
+          manual: false
+        }
       }
     };
     if (isPuppet) {
