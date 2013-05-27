@@ -55,7 +55,8 @@ document.body.onload = function() {
         return _this.stage.update();
       });
       document.oncontextmenu = function(e) {
-        return e.preventDefault();
+        e.preventDefault();
+        return createjs.Sound.play("/audio/reload.mp3");
       };
       document.onkeydown = function(e) {
         switch (e.which) {

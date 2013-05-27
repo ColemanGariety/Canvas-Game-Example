@@ -51,6 +51,7 @@ document.body.onload = ->
       # Weapon controls
       document.oncontextmenu = (e) =>
         e.preventDefault()
+        createjs.Sound.play "/audio/reload.mp3"
 
       # Movement controls
       document.onkeydown = (e) =>
