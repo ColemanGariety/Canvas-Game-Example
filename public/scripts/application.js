@@ -15,8 +15,19 @@ document.body.onload = function() {
       this.stage.addChild(this.world);
       this.players = [];
       resizeCanvas = function() {
-        _this.stage.canvas.width = window.innerWidth;
-        _this.stage.canvas.height = window.innerHeight;
+        var retina, _ref;
+        retina = (_ref = window.devicePixelRatio > 1) != null ? _ref : {
+          "true": false
+        };
+        if (retina) {
+          _this.stage.canvas.width = window.innerWidth * 2;
+          _this.stage.canvas.height = window.innerHeight * 2;
+        } else {
+          _this.stage.canvas.width = window.innerWidth;
+          _this.stage.canvas.height = window.innerHeight;
+        }
+        _this.stage.canvas.style.width = "" + window.innerWidth + "px";
+        _this.stage.canvas.style.height = "" + window.innerHeight + "px";
         if (_this.players[0]) {
           _this.players[0].bitmap.x = window.innerWidth / 2;
           _this.players[0].bitmap.y = window.innerHeight / 2;

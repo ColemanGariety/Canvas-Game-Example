@@ -15,10 +15,19 @@ document.body.onload = ->
 
       # Size the canvas
       resizeCanvas = =>
-        @stage.canvas.width = window.innerWidth
-        @stage.canvas.height = window.innerHeight
+        retina = window.devicePixelRatio > 1 ? true : false;
+        if retina
+          @stage.canvas.width = window.innerWidth * 2;
+          @stage.canvas.height = window.innerHeight * 2;
+        else
+          @stage.canvas.width = window.innerWidth;
+          @stage.canvas.height = window.innerHeight;
+
+        @stage.canvas.style.width = "#{window.innerWidth}px"
+        @stage.canvas.style.height = "#{window.innerHeight}px"
 
         # Move the world
+          # I failed math
 
         # Move the player
         if @players[0]
@@ -27,6 +36,8 @@ document.body.onload = ->
 
         # Redraw
         @stage.update()
+
+      # Resize triggers
       resizeCanvas()
       window.addEventListener 'resize', resizeCanvas
 
