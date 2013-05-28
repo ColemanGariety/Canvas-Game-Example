@@ -46,6 +46,9 @@ class Game
 
         # Movement actions
         if player.actions.movement.up == true
+          if @players[0].bitmap.currentAnimation == "stand"
+            @players[0].bitmap.gotoAndPlay("runu")
+
           if (@world.y + 15) > 0
             @players[0].bitmap.y -= 15
           else if game.players[0].bitmap.y != window.innerHeight / 2
@@ -53,16 +56,19 @@ class Game
           else
             @world.y += 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
         if player.actions.movement.down == true
-          # Animate running down
-          @players[0].bitmap.gotoAndPlay("run")
+          if @players[0].bitmap.currentAnimation == "stand"
+            @players[0].bitmap.gotoAndPlay("rund")
 
-          if (@world.y - 15) < (-4000 + window.innerWidth)
+          if (@world.y - 15) < (-40000 + window.innerWidth)
             @players[0].bitmap.y += 15
           else if game.players[0].bitmap.y != window.innerHeight / 2
             @players[0].bitmap.y += 15
           else
             @world.y -= 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
         if player.actions.movement.left == true
+          if @players[0].bitmap.currentAnimation == "stand"
+            @players[0].bitmap.gotoAndPlay("runr_h")
+
           if (@world.x + 15) > 0
             @players[0].bitmap.x -= 15
           else if game.players[0].bitmap.x != window.innerWidth / 2
@@ -70,7 +76,10 @@ class Game
           else
             @world.x += 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
         if player.actions.movement.right == true
-          if (@world.x - 15) < (-4000 + window.innerWidth)
+          if @players[0].bitmap.currentAnimation == "stand"
+            @players[0].bitmap.gotoAndPlay("runr")
+
+          if (@world.x - 15) < (-40000 + window.innerWidth)
             @players[0].bitmap.x += 15
           else if game.players[0].bitmap.x != window.innerWidth / 2
             @players[0].bitmap.x += 15
@@ -103,10 +112,10 @@ class Game
 
     document.onkeyup = (e) =>
       switch e.which
-        when 87 then @players[0].actions.movement.up = false
-        when 83 then @players[0].actions.movement.down = false; @players[0].bitmap.gotoAndStop("run")
-        when 65 then @players[0].actions.movement.left = false
-        when 68 then @players[0].actions.movement.right = false
+        when 87 then @players[0].actions.movement.up = false; @players[0].bitmap.gotoAndStop("stand")
+        when 83 then @players[0].actions.movement.down = false; @players[0].bitmap.gotoAndStop("stand")
+        when 65 then @players[0].actions.movement.left = false; @players[0].bitmap.gotoAndStop("stand")
+        when 68 then @players[0].actions.movement.right = false; @players[0].bitmap.gotoAndStop("stand")
 
 class Player extends Game
   constructor: (name, isPuppet) ->
@@ -118,15 +127,30 @@ class Player extends Game
 
     @spritesheet = new createjs.SpriteSheet(
       images: ["images/player.png"]
-      frames:
-        width: 100
-        height: 106
+      frames: [
+        [0, 111, 111, 111, 0, 55, 55],
+        [111, 111, 111, 111, 0, 55, 55],
+        [222, 111, 111, 111, 0, 55, 55],
+        [333, 111, 111, 111, 0, 55, 55],
+        [111, 111, 111, 111, 0, 55, 55],
+        [111, 111, 111, 111, 0, 55, 55],
+        [222, 111, 111, 111, 0, 55, 55],
+        [333, 111, 111, 111, 0, 55, 55],
+      ]
       animations:
         stand: [0]
-        run:
-          frames: [0, 1]
+        runu:
+          frames: [0, 1, 2, 3]
+          frequency: 3
+        rund:
+          frames: [0, 1, 2, 3]
+          frequency: 3
+        runr:
+          frames: [0, 1, 2, 3]
           frequency: 3
     )
+
+    createjs.SpriteSheetUtils.addFlippedFrames(@spritesheet, true)
 
     @bitmap = new createjs.BitmapAnimation(@spritesheet)
 
@@ -171,7 +195,7 @@ class Continent extends Game
     @bitmap.src = "images/grass.jpg"
 
     @shape = new createjs.Shape()
-    @shape.graphics.beginBitmapFill(@bitmap, "repeat").drawRect(0, 0, 4000, 4000)
+    @shape.graphics.beginBitmapFill(@bitmap, "repeat").drawRect(0, 0, 40000, 40000)
 
     game.world.addChild(@shape);
 

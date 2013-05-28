@@ -41,6 +41,9 @@ Game = (function() {
           delete automaticInstance;
         }
         if (player.actions.movement.up === true) {
+          if (_this.players[0].bitmap.currentAnimation === "stand") {
+            _this.players[0].bitmap.gotoAndPlay("runu");
+          }
           if ((_this.world.y + 15) > 0) {
             _this.players[0].bitmap.y -= 15;
           } else if (game.players[0].bitmap.y !== window.innerHeight / 2) {
@@ -52,8 +55,10 @@ Game = (function() {
           }
         }
         if (player.actions.movement.down === true) {
-          _this.players[0].bitmap.gotoAndPlay("run");
-          if ((_this.world.y - 15) < (-4000 + window.innerWidth)) {
+          if (_this.players[0].bitmap.currentAnimation === "stand") {
+            _this.players[0].bitmap.gotoAndPlay("rund");
+          }
+          if ((_this.world.y - 15) < (-40000 + window.innerWidth)) {
             _this.players[0].bitmap.y += 15;
           } else if (game.players[0].bitmap.y !== window.innerHeight / 2) {
             _this.players[0].bitmap.y += 15;
@@ -64,6 +69,9 @@ Game = (function() {
           }
         }
         if (player.actions.movement.left === true) {
+          if (_this.players[0].bitmap.currentAnimation === "stand") {
+            _this.players[0].bitmap.gotoAndPlay("runr_h");
+          }
           if ((_this.world.x + 15) > 0) {
             _this.players[0].bitmap.x -= 15;
           } else if (game.players[0].bitmap.x !== window.innerWidth / 2) {
@@ -75,7 +83,10 @@ Game = (function() {
           }
         }
         if (player.actions.movement.right === true) {
-          if ((_this.world.x - 15) < (-4000 + window.innerWidth)) {
+          if (_this.players[0].bitmap.currentAnimation === "stand") {
+            _this.players[0].bitmap.gotoAndPlay("runr");
+          }
+          if ((_this.world.x - 15) < (-40000 + window.innerWidth)) {
             _this.players[0].bitmap.x += 15;
           } else if (game.players[0].bitmap.x !== window.innerWidth / 2) {
             _this.players[0].bitmap.x += 15;
@@ -119,14 +130,17 @@ Game = (function() {
     document.onkeyup = function(e) {
       switch (e.which) {
         case 87:
-          return _this.players[0].actions.movement.up = false;
+          _this.players[0].actions.movement.up = false;
+          return _this.players[0].bitmap.gotoAndStop("stand");
         case 83:
           _this.players[0].actions.movement.down = false;
-          return _this.players[0].bitmap.gotoAndStop("run");
+          return _this.players[0].bitmap.gotoAndStop("stand");
         case 65:
-          return _this.players[0].actions.movement.left = false;
+          _this.players[0].actions.movement.left = false;
+          return _this.players[0].bitmap.gotoAndStop("stand");
         case 68:
-          return _this.players[0].actions.movement.right = false;
+          _this.players[0].actions.movement.right = false;
+          return _this.players[0].bitmap.gotoAndStop("stand");
       }
     };
   }
@@ -145,18 +159,24 @@ Player = (function(_super) {
     this.isPuppet = isPuppet || false;
     this.spritesheet = new createjs.SpriteSheet({
       images: ["images/player.png"],
-      frames: {
-        width: 100,
-        height: 106
-      },
+      frames: [[0, 111, 111, 111, 0, 55, 55], [111, 111, 111, 111, 0, 55, 55], [222, 111, 111, 111, 0, 55, 55], [333, 111, 111, 111, 0, 55, 55], [111, 111, 111, 111, 0, 55, 55], [111, 111, 111, 111, 0, 55, 55], [222, 111, 111, 111, 0, 55, 55], [333, 111, 111, 111, 0, 55, 55]],
       animations: {
         stand: [0],
-        run: {
-          frames: [0, 1],
+        runu: {
+          frames: [0, 1, 2, 3],
+          frequency: 3
+        },
+        rund: {
+          frames: [0, 1, 2, 3],
+          frequency: 3
+        },
+        runr: {
+          frames: [0, 1, 2, 3],
           frequency: 3
         }
       }
     });
+    createjs.SpriteSheetUtils.addFlippedFrames(this.spritesheet, true);
     this.bitmap = new createjs.BitmapAnimation(this.spritesheet);
     if (isPuppet) {
       this.bitmap.x = window.innerWidth / 2;
@@ -205,7 +225,7 @@ Continent = (function(_super) {
     this.bitmap = new Image();
     this.bitmap.src = "images/grass.jpg";
     this.shape = new createjs.Shape();
-    this.shape.graphics.beginBitmapFill(this.bitmap, "repeat").drawRect(0, 0, 4000, 4000);
+    this.shape.graphics.beginBitmapFill(this.bitmap, "repeat").drawRect(0, 0, 40000, 40000);
     game.world.addChild(this.shape);
   }
 
