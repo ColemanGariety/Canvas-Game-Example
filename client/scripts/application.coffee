@@ -46,7 +46,7 @@ class Game
 
         # Movement actions
         if player.actions.movement.up == true
-          if @players[0].bitmap.currentAnimation == "stand"
+          if @players[0].bitmap.currentAnimation == "standd"
             @players[0].bitmap.gotoAndPlay("runu")
 
           if (@world.y + 15) > 0
@@ -56,7 +56,7 @@ class Game
           else
             @world.y += 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
         if player.actions.movement.down == true
-          if @players[0].bitmap.currentAnimation == "stand"
+          if @players[0].bitmap.currentAnimation == "standd"
             @players[0].bitmap.gotoAndPlay("rund")
 
           if (@world.y - 15) < (-40000 + window.innerWidth)
@@ -66,7 +66,7 @@ class Game
           else
             @world.y -= 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
         if player.actions.movement.left == true
-          if @players[0].bitmap.currentAnimation == "stand"
+          if @players[0].bitmap.currentAnimation == "standd"
             @players[0].bitmap.gotoAndPlay("runr_h")
 
           if (@world.x + 15) > 0
@@ -76,7 +76,7 @@ class Game
           else
             @world.x += 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
         if player.actions.movement.right == true
-          if @players[0].bitmap.currentAnimation == "stand"
+          if @players[0].bitmap.currentAnimation == "standd"
             @players[0].bitmap.gotoAndPlay("runr")
 
           if (@world.x - 15) < (-40000 + window.innerWidth)
@@ -112,10 +112,10 @@ class Game
 
     document.onkeyup = (e) =>
       switch e.which
-        when 87 then @players[0].actions.movement.up = false; @players[0].bitmap.gotoAndStop("stand")
-        when 83 then @players[0].actions.movement.down = false; @players[0].bitmap.gotoAndStop("stand")
-        when 65 then @players[0].actions.movement.left = false; @players[0].bitmap.gotoAndStop("stand")
-        when 68 then @players[0].actions.movement.right = false; @players[0].bitmap.gotoAndStop("stand")
+        when 87 then @players[0].actions.movement.up = false; @players[0].bitmap.gotoAndPlay("standd")
+        when 83 then @players[0].actions.movement.down = false; @players[0].bitmap.gotoAndPlay("standd")
+        when 65 then @players[0].actions.movement.left = false; @players[0].bitmap.gotoAndPlay("standd")
+        when 68 then @players[0].actions.movement.right = false; @players[0].bitmap.gotoAndPlay("standd")
 
 class Player extends Game
   constructor: (name, isPuppet) ->
@@ -132,18 +132,31 @@ class Player extends Game
         [111, 111, 111, 111, 0, 55, 55],
         [222, 111, 111, 111, 0, 55, 55],
         [333, 111, 111, 111, 0, 55, 55],
-        [111, 111, 111, 111, 0, 55, 55],
-        [111, 111, 111, 111, 0, 55, 55],
-        [222, 111, 111, 111, 0, 55, 55],
-        [333, 111, 111, 111, 0, 55, 55],
+        [0, 555, 111, 111, 0, 55, 55],
+        [111, 555, 111, 111, 0, 55, 55],
+        [0, 888, 111, 111, 0, 55, 55],
+        [111, 888, 111, 111, 0, 55, 55],
+        [0, 444, 111, 111, 0, 55, 55],
+        [111, 444, 111, 111, 0, 55, 55],
+        [222, 444, 111, 111, 0, 55, 55],
+        [333, 444, 111, 111, 0, 55, 55],
+        [0, 777, 111, 111, 0, 55, 55],
+        [111, 777, 111, 111, 0, 55, 55],
+        [222, 777, 111, 111, 0, 55, 55],
+        [333, 777, 111, 111, 0, 55, 55]
       ]
       animations:
-        stand: [0]
+        standd:
+          frames: [6, 7]
+          frequency: 10
+        standu:
+          frames: [4, 5]
+          frequency: 10
         runu:
-          frames: [0, 1, 2, 3]
+          frames: [8, 9, 10, 11]
           frequency: 3
         rund:
-          frames: [0, 1, 2, 3]
+          frames: [12, 13, 14, 15]
           frequency: 3
         runr:
           frames: [0, 1, 2, 3]
@@ -164,7 +177,7 @@ class Player extends Game
     @bitmap.regX = 50
     @bitmap.regY = 53
 
-    @bitmap.gotoAndPlay("stand")
+    @bitmap.gotoAndPlay("standd")
 
     @actions =
       movement:

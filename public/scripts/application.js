@@ -41,7 +41,7 @@ Game = (function() {
           delete automaticInstance;
         }
         if (player.actions.movement.up === true) {
-          if (_this.players[0].bitmap.currentAnimation === "stand") {
+          if (_this.players[0].bitmap.currentAnimation === "standd") {
             _this.players[0].bitmap.gotoAndPlay("runu");
           }
           if ((_this.world.y + 15) > 0) {
@@ -55,7 +55,7 @@ Game = (function() {
           }
         }
         if (player.actions.movement.down === true) {
-          if (_this.players[0].bitmap.currentAnimation === "stand") {
+          if (_this.players[0].bitmap.currentAnimation === "standd") {
             _this.players[0].bitmap.gotoAndPlay("rund");
           }
           if ((_this.world.y - 15) < (-40000 + window.innerWidth)) {
@@ -69,7 +69,7 @@ Game = (function() {
           }
         }
         if (player.actions.movement.left === true) {
-          if (_this.players[0].bitmap.currentAnimation === "stand") {
+          if (_this.players[0].bitmap.currentAnimation === "standd") {
             _this.players[0].bitmap.gotoAndPlay("runr_h");
           }
           if ((_this.world.x + 15) > 0) {
@@ -83,7 +83,7 @@ Game = (function() {
           }
         }
         if (player.actions.movement.right === true) {
-          if (_this.players[0].bitmap.currentAnimation === "stand") {
+          if (_this.players[0].bitmap.currentAnimation === "standd") {
             _this.players[0].bitmap.gotoAndPlay("runr");
           }
           if ((_this.world.x - 15) < (-40000 + window.innerWidth)) {
@@ -131,16 +131,16 @@ Game = (function() {
       switch (e.which) {
         case 87:
           _this.players[0].actions.movement.up = false;
-          return _this.players[0].bitmap.gotoAndStop("stand");
+          return _this.players[0].bitmap.gotoAndPlay("standd");
         case 83:
           _this.players[0].actions.movement.down = false;
-          return _this.players[0].bitmap.gotoAndStop("stand");
+          return _this.players[0].bitmap.gotoAndPlay("standd");
         case 65:
           _this.players[0].actions.movement.left = false;
-          return _this.players[0].bitmap.gotoAndStop("stand");
+          return _this.players[0].bitmap.gotoAndPlay("standd");
         case 68:
           _this.players[0].actions.movement.right = false;
-          return _this.players[0].bitmap.gotoAndStop("stand");
+          return _this.players[0].bitmap.gotoAndPlay("standd");
       }
     };
   }
@@ -159,15 +159,22 @@ Player = (function(_super) {
     this.isPuppet = isPuppet || false;
     this.spritesheet = new createjs.SpriteSheet({
       images: ["images/player.png"],
-      frames: [[0, 111, 111, 111, 0, 55, 55], [111, 111, 111, 111, 0, 55, 55], [222, 111, 111, 111, 0, 55, 55], [333, 111, 111, 111, 0, 55, 55], [111, 111, 111, 111, 0, 55, 55], [111, 111, 111, 111, 0, 55, 55], [222, 111, 111, 111, 0, 55, 55], [333, 111, 111, 111, 0, 55, 55]],
+      frames: [[0, 111, 111, 111, 0, 55, 55], [111, 111, 111, 111, 0, 55, 55], [222, 111, 111, 111, 0, 55, 55], [333, 111, 111, 111, 0, 55, 55], [0, 555, 111, 111, 0, 55, 55], [111, 555, 111, 111, 0, 55, 55], [0, 888, 111, 111, 0, 55, 55], [111, 888, 111, 111, 0, 55, 55], [0, 444, 111, 111, 0, 55, 55], [111, 444, 111, 111, 0, 55, 55], [222, 444, 111, 111, 0, 55, 55], [333, 444, 111, 111, 0, 55, 55], [0, 777, 111, 111, 0, 55, 55], [111, 777, 111, 111, 0, 55, 55], [222, 777, 111, 111, 0, 55, 55], [333, 777, 111, 111, 0, 55, 55]],
       animations: {
-        stand: [0],
+        standd: {
+          frames: [6, 7],
+          frequency: 10
+        },
+        standu: {
+          frames: [4, 5],
+          frequency: 10
+        },
         runu: {
-          frames: [0, 1, 2, 3],
+          frames: [8, 9, 10, 11],
           frequency: 3
         },
         rund: {
-          frames: [0, 1, 2, 3],
+          frames: [12, 13, 14, 15],
           frequency: 3
         },
         runr: {
@@ -187,7 +194,7 @@ Player = (function(_super) {
     }
     this.bitmap.regX = 50;
     this.bitmap.regY = 53;
-    this.bitmap.gotoAndPlay("stand");
+    this.bitmap.gotoAndPlay("standd");
     this.actions = {
       movement: {
         up: false,
