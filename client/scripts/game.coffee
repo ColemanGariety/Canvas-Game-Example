@@ -9,12 +9,12 @@ class Game
     @world = new createjs.Container()
     @stage.addChild(@world)
     
-    # Start music
+    # Game music
     handleLoad = (event) ->
-      # instance = instance = createjs.Sound.play("ragevalley")
-      # instance.setVolume(0.25);
+      instance = createjs.Sound.play("ragevalley")
+      instance.setVolume(0.25);
     createjs.Sound.addEventListener("fileload", handleLoad)
-    createjs.Sound.registerSound("audio/rage.mp3", "ragevalley")
+    # createjs.Sound.registerSound("audio/rage.mp3", "ragevalley")
 
     # Players in the game
     @players = []
@@ -42,48 +42,53 @@ class Game
     # Render loop
     createjs.Ticker.setFPS 30
     createjs.Ticker.addEventListener "tick", =>
-      for player in @players
-        # Movement actions
-        if player.actions.movement.up == true
-          if @players[0].bitmap.currentAnimation == "standd"
-            @players[0].bitmap.gotoAndPlay("runu")
+      # Move up
+      if @players[0].actions.indexOf("runUp") != -1
+        if @players[0].bitmap.currentAnimation == "standd"
+          @players[0].bitmap.gotoAndPlay("runu")
 
-          if (@world.y + 15) > 0
-            @players[0].bitmap.y -= 15
-          else if game.players[0].bitmap.y != window.innerHeight / 2
-            @players[0].bitmap.y -= 15
-          else
-            @world.y += 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
-        if player.actions.movement.down == true
-          if @players[0].bitmap.currentAnimation == "standd"
-            @players[0].bitmap.gotoAndPlay("rund")
+        if (@world.y + 15) > 0
+          @players[0].bitmap.y -= 15
+        else if game.players[0].bitmap.y != window.innerHeight / 2
+          @players[0].bitmap.y -= 15
+        else
+          @world.y += 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
+      
+      # Move down
+      if @players[0].actions.indexOf("runDown") != -1
+        if @players[0].bitmap.currentAnimation == "standd"
+          @players[0].bitmap.gotoAndPlay("rund")
 
-          if (@world.y - 15) < (-40000 + window.innerWidth)
-            @players[0].bitmap.y += 15
-          else if game.players[0].bitmap.y != window.innerHeight / 2
-            @players[0].bitmap.y += 15
-          else
-            @world.y -= 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
-        if player.actions.movement.left == true
-          if @players[0].bitmap.currentAnimation == "standd"
-            @players[0].bitmap.gotoAndPlay("runr_h")
+        if (@world.y - 15) < (-40000 + window.innerWidth)
+          @players[0].bitmap.y += 15
+        else if game.players[0].bitmap.y != window.innerHeight / 2
+          @players[0].bitmap.y += 15
+        else
+          @world.y -= 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
+      
+      # Move left
+      if @players[0].actions.indexOf("runLeft") != -1
+        if @players[0].bitmap.currentAnimation == "standd"
+          @players[0].bitmap.gotoAndPlay("runr_h")
 
-          if (@world.x + 15) > 0
-            @players[0].bitmap.x -= 15
-          else if game.players[0].bitmap.x != window.innerWidth / 2
-            @players[0].bitmap.x -= 15
-          else
-            @world.x += 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
-        if player.actions.movement.right == true
-          if @players[0].bitmap.currentAnimation == "standd"
-            @players[0].bitmap.gotoAndPlay("runr")
+        if (@world.x + 15) > 0
+          @players[0].bitmap.x -= 15
+        else if game.players[0].bitmap.x != window.innerWidth / 2
+          @players[0].bitmap.x -= 15
+        else
+          @world.x += 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
+      
+      # Move right
+      if @players[0].actions.indexOf("runRight") != -1
+        if @players[0].bitmap.currentAnimation == "standd"
+          @players[0].bitmap.gotoAndPlay("runr")
 
-          if (@world.x - 15) < (-40000 + window.innerWidth)
-            @players[0].bitmap.x += 15
-          else if game.players[0].bitmap.x != window.innerWidth / 2
-            @players[0].bitmap.x += 15
-          else
-            @world.x -= 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
+        if (@world.x - 15) < (-40000 + window.innerWidth)
+          @players[0].bitmap.x += 15
+        else if game.players[0].bitmap.x != window.innerWidth / 2
+          @players[0].bitmap.x += 15
+        else
+          @world.x -= 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
 
       # Redraw
       @stage.update()
@@ -95,26 +100,26 @@ class Game
 
     document.onmousedown = (e) =>
       switch e.which
-        when 1 then @shootInstance = createjs.Sound.play("audio/smg.m4a", "none", 0, 0, -1); @players[0].actions.weapons.shooting.automatic = true;
+        when 1 then @shootInstance = createjs.Sound.play("audio/smg.m4a", "none", 0, 0, -1); @players[0].actions.push("shoot");
 
     document.onmouseup = (e) =>
       switch e.which
-        when 1 then  @shootInstance.stop("audio/smg.m4a", "none", 0, 0, 0); @players[0].actions.weapons.shooting.automatic = false;
+        when 1 then  @shootInstance.stop("audio/smg.m4a", "none", 0, 0, 0); @players[0].actions.splice(@players[0].actions.indexOf("shoot"), 1);
 
     # Movement controls
     document.onkeydown = (e) =>
       switch e.which
-        when 87 then @players[0].actions.movement.up = true
-        when 83 then @players[0].actions.movement.down = true
-        when 65 then @players[0].actions.movement.left = true
-        when 68 then @players[0].actions.movement.right = true
+        when 87 then @players[0].actions.push("runUp") unless @players[0].actions.indexOf("runUp") != -1
+        when 83 then @players[0].actions.push("runDown") unless @players[0].actions.indexOf("runDown") != -1
+        when 65 then @players[0].actions.push("runLeft") unless @players[0].actions.indexOf("runLeft") != -1
+        when 68 then @players[0].actions.push("runRight") unless @players[0].actions.indexOf("runRight") != -1
 
     document.onkeyup = (e) =>
       switch e.which
-        when 87 then @players[0].actions.movement.up = false; @players[0].bitmap.gotoAndPlay("standd")
-        when 83 then @players[0].actions.movement.down = false; @players[0].bitmap.gotoAndPlay("standd")
-        when 65 then @players[0].actions.movement.left = false; @players[0].bitmap.gotoAndPlay("standd")
-        when 68 then @players[0].actions.movement.right = false; @players[0].bitmap.gotoAndPlay("standd")
+        when 87 then @players[0].actions.splice(@players[0].actions.indexOf("runUp"), 1); @players[0].bitmap.gotoAndPlay("standd")
+        when 83 then @players[0].actions.splice(@players[0].actions.indexOf("runDown"), 1); @players[0].bitmap.gotoAndPlay("standd")
+        when 65 then @players[0].actions.splice(@players[0].actions.indexOf("runLeft"), 1); @players[0].bitmap.gotoAndPlay("standd")
+        when 68 then @players[0].actions.splice(@players[0].actions.indexOf("runRight"), 1); @players[0].bitmap.gotoAndPlay("standd")
 
 # ?
 if window? then window.Game = Game else if module?.exports? then module.exports = Game

@@ -47,20 +47,7 @@ window.Player = (function(_super) {
     this.bitmap.regX = 50;
     this.bitmap.regY = 53;
     this.bitmap.gotoAndPlay("standd");
-    this.actions = {
-      movement: {
-        up: false,
-        down: false,
-        left: false,
-        right: false
-      },
-      weapons: {
-        shooting: {
-          automatic: false,
-          manual: false
-        }
-      }
-    };
+    this.actions = [];
     if (isPuppet) {
       game.stage.addChild(this.bitmap);
     } else {

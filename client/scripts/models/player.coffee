@@ -60,16 +60,7 @@ class window.Player extends Game
 
     @bitmap.gotoAndPlay("standd")
 
-    @actions =
-      movement:
-        up: false
-        down: false
-        left: false
-        right: false
-      weapons:
-        shooting:
-          automatic: false
-          manual: false
+    @actions = []
 
     if isPuppet
       game.stage.addChild @bitmap
