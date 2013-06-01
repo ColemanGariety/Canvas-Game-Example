@@ -8,6 +8,13 @@ class Game
     # Initialize the world
     @world = new createjs.Container()
     @stage.addChild(@world)
+    
+    # Start music
+    handleLoad = (event) ->
+      # instance = instance = createjs.Sound.play("ragevalley")
+      instance.setVolume(0.25);
+    createjs.Sound.addEventListener("fileload", handleLoad)
+    createjs.Sound.registerSound("audio/rage.mp3", "ragevalley")
 
     # Players in the game
     @players = []
@@ -36,14 +43,6 @@ class Game
     createjs.Ticker.setFPS 30
     createjs.Ticker.addEventListener "tick", =>
       for player in @players
-        if player.actions.weapons.shooting.automatic == true
-          createjs.Sound.registerSound("audio/mp5.mp3", "automatic");
-          handleLoad = (event) ->
-            automaticInstance = createjs.Sound.play("automatic", "none", 0, 0, 1);
-          createjs.Sound.addEventListener("fileload", handleLoad);
-        else
-          delete automaticInstance
-
         # Movement actions
         if player.actions.movement.up == true
           if @players[0].bitmap.currentAnimation == "standd"
@@ -96,11 +95,11 @@ class Game
 
     document.onmousedown = (e) =>
       switch e.which
-        when 1 then  @players[0].actions.weapons.shooting.automatic = true
+        when 1 then @shootInstance = createjs.Sound.play("audio/smg.m4a", "none", 0, 0, -1); @players[0].actions.weapons.shooting.automatic = true;
 
     document.onmouseup = (e) =>
       switch e.which
-        when 1 then  @players[0].actions.weapons.shooting.automatic = false
+        when 1 then  @shootInstance.stop("audio/smg.m4a", "none", 0, 0, 0); @players[0].actions.weapons.shooting.automatic = false;
 
     # Movement controls
     document.onkeydown = (e) =>
