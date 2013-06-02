@@ -55,9 +55,6 @@ class window.Player extends Game
       @bitmap.x = window.innerWidth / 2 + 100
       @bitmap.y = window.innerHeight / 2 + 100
 
-    @bitmap.regX = 50
-    @bitmap.regY = 53
-
     @bitmap.gotoAndPlay("standd")
 
     @actions = []
@@ -68,3 +65,60 @@ class window.Player extends Game
       game.world.addChild @bitmap
 
     game.players.push(@)
+  
+  @shoot = (command, type) ->
+    if command == "start"
+      game.players[0].bulletInterval = setInterval ->
+        bullet = new Bullet()
+      , 10
+    else if command == "stop"
+      clearInterval(game.players[0].bulletInterval)
+
+  @move = ->
+    # Move up
+    if game.players[0].actions.indexOf("runUp") != -1
+      if game.players[0].bitmap.currentAnimation == "standd"
+        game.players[0].bitmap.gotoAndPlay("runu")
+
+      if (game.world.y + 15) > 0
+        game.players[0].bitmap.y -= 15
+      else if game.players[0].bitmap.y != window.innerHeight / 2
+        game.players[0].bitmap.y -= 15
+      else
+        game.world.y += 15 unless collision.checkPixelCollision(game.players[0].bitmap, game.players[1].bitmap, 0, true)
+    
+    # Move down
+    if game.players[0].actions.indexOf("runDown") != -1
+      if game.players[0].bitmap.currentAnimation == "standd"
+        game.players[0].bitmap.gotoAndPlay("rund")
+
+      if (game.world.y - 15) < (-40000 + window.innerWidth)
+        game.players[0].bitmap.y += 15
+      else if game.players[0].bitmap.y != window.innerHeight / 2
+        game.players[0].bitmap.y += 15
+      else
+        game.world.y -= 15 unless collision.checkPixelCollision(game.players[0].bitmap, game.players[1].bitmap, 0, true)
+    
+    # Move left
+    if game.players[0].actions.indexOf("runLeft") != -1
+      if game.players[0].bitmap.currentAnimation == "standd"
+        game.players[0].bitmap.gotoAndPlay("runr_h")
+
+      if (game.world.x + 15) > 0
+        game.players[0].bitmap.x -= 15
+      else if game.players[0].bitmap.x != window.innerWidth / 2
+        game.players[0].bitmap.x -= 15
+      else
+        game.world.x += 15 unless collision.checkPixelCollision(game.players[0].bitmap, game.players[1].bitmap, 0, true)
+    
+    # Move right
+    if game.players[0].actions.indexOf("runRight") != -1
+      if game.players[0].bitmap.currentAnimation == "standd"
+        game.players[0].bitmap.gotoAndPlay("runr")
+
+      if (game.world.x - 15) < (-40000 + window.innerWidth)
+        game.players[0].bitmap.x += 15
+      else if game.players[0].bitmap.x != window.innerWidth / 2
+        game.players[0].bitmap.x += 15
+      else
+        game.world.x -= 15 unless collision.checkPixelCollision(game.players[0].bitmap, game.players[1].bitmap, 0, true)

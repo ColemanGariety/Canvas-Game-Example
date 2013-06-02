@@ -11,13 +11,14 @@ class Game
     
     # Game music
     handleLoad = (event) ->
-      instance = createjs.Sound.play("ragevalley")
-      instance.setVolume(0.25);
+      # instance = createjs.Sound.play "ragevalley"
+      # instance.setVolume(0.25);
     createjs.Sound.addEventListener("fileload", handleLoad)
-    # createjs.Sound.registerSound("audio/rage.mp3", "ragevalley")
+    createjs.Sound.registerSound("audio/rage.mp3", "ragevalley")
 
-    # Players in the game
+    # Players & bullets in the game
     @players = []
+    @bullets = []
 
     # Size the canvas
     resizeCanvas = =>
@@ -42,54 +43,11 @@ class Game
     # Render loop
     createjs.Ticker.setFPS 30
     createjs.Ticker.addEventListener "tick", =>
-      # Move up
-      if @players[0].actions.indexOf("runUp") != -1
-        if @players[0].bitmap.currentAnimation == "standd"
-          @players[0].bitmap.gotoAndPlay("runu")
-
-        if (@world.y + 15) > 0
-          @players[0].bitmap.y -= 15
-        else if game.players[0].bitmap.y != window.innerHeight / 2
-          @players[0].bitmap.y -= 15
-        else
-          @world.y += 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
+      Player.move()
       
-      # Move down
-      if @players[0].actions.indexOf("runDown") != -1
-        if @players[0].bitmap.currentAnimation == "standd"
-          @players[0].bitmap.gotoAndPlay("rund")
-
-        if (@world.y - 15) < (-40000 + window.innerWidth)
-          @players[0].bitmap.y += 15
-        else if game.players[0].bitmap.y != window.innerHeight / 2
-          @players[0].bitmap.y += 15
-        else
-          @world.y -= 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
-      
-      # Move left
-      if @players[0].actions.indexOf("runLeft") != -1
-        if @players[0].bitmap.currentAnimation == "standd"
-          @players[0].bitmap.gotoAndPlay("runr_h")
-
-        if (@world.x + 15) > 0
-          @players[0].bitmap.x -= 15
-        else if game.players[0].bitmap.x != window.innerWidth / 2
-          @players[0].bitmap.x -= 15
-        else
-          @world.x += 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
-      
-      # Move right
-      if @players[0].actions.indexOf("runRight") != -1
-        if @players[0].bitmap.currentAnimation == "standd"
-          @players[0].bitmap.gotoAndPlay("runr")
-
-        if (@world.x - 15) < (-40000 + window.innerWidth)
-          @players[0].bitmap.x += 15
-        else if game.players[0].bitmap.x != window.innerWidth / 2
-          @players[0].bitmap.x += 15
-        else
-          @world.x -= 15 unless collision.checkPixelCollision(@players[0].bitmap, @players[1].bitmap, 0, true)
-
+      for bullet in @bullets
+        Bullet.move(bullet)
+    
       # Redraw
       @stage.update()
 
@@ -100,11 +58,24 @@ class Game
 
     document.onmousedown = (e) =>
       switch e.which
-        when 1 then @shootInstance = createjs.Sound.play("audio/smg.m4a", "none", 0, 0, -1); @players[0].actions.push("shoot");
+        when 1
+          if e.pageX || e.pageY
+            @posx = e.pageX;
+            @posy = e.pageY;
+          else if e.clientX || e.clientY
+            @posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft
+            @posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop
+          
+          Player.shoot("start") if @players[0].actions.indexOf("shoot") == -1
+          @shootInstance = createjs.Sound.play("audio/smg.m4a", "none", 0, 0, -1)
+          @players[0].actions.push("shoot")
 
     document.onmouseup = (e) =>
       switch e.which
-        when 1 then  @shootInstance.stop("audio/smg.m4a", "none", 0, 0, 0); @players[0].actions.splice(@players[0].actions.indexOf("shoot"), 1);
+        when 1
+          Player.shoot("stop")
+          @shootInstance.stop("audio/smg.m4a", "none", 0, 0, 0)
+          @players[0].actions.splice(@players[0].actions.indexOf("shoot"), 1)
 
     # Movement controls
     document.onkeydown = (e) =>

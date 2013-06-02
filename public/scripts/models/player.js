@@ -44,8 +44,6 @@ window.Player = (function(_super) {
       this.bitmap.x = window.innerWidth / 2 + 100;
       this.bitmap.y = window.innerHeight / 2 + 100;
     }
-    this.bitmap.regX = 50;
-    this.bitmap.regY = 53;
     this.bitmap.gotoAndPlay("standd");
     this.actions = [];
     if (isPuppet) {
@@ -55,6 +53,77 @@ window.Player = (function(_super) {
     }
     game.players.push(this);
   }
+
+  Player.shoot = function(command, type) {
+    if (command === "start") {
+      return game.players[0].bulletInterval = setInterval(function() {
+        var bullet;
+
+        return bullet = new Bullet();
+      }, 10);
+    } else if (command === "stop") {
+      return clearInterval(game.players[0].bulletInterval);
+    }
+  };
+
+  Player.move = function() {
+    if (game.players[0].actions.indexOf("runUp") !== -1) {
+      if (game.players[0].bitmap.currentAnimation === "standd") {
+        game.players[0].bitmap.gotoAndPlay("runu");
+      }
+      if ((game.world.y + 15) > 0) {
+        game.players[0].bitmap.y -= 15;
+      } else if (game.players[0].bitmap.y !== window.innerHeight / 2) {
+        game.players[0].bitmap.y -= 15;
+      } else {
+        if (!collision.checkPixelCollision(game.players[0].bitmap, game.players[1].bitmap, 0, true)) {
+          game.world.y += 15;
+        }
+      }
+    }
+    if (game.players[0].actions.indexOf("runDown") !== -1) {
+      if (game.players[0].bitmap.currentAnimation === "standd") {
+        game.players[0].bitmap.gotoAndPlay("rund");
+      }
+      if ((game.world.y - 15) < (-40000 + window.innerWidth)) {
+        game.players[0].bitmap.y += 15;
+      } else if (game.players[0].bitmap.y !== window.innerHeight / 2) {
+        game.players[0].bitmap.y += 15;
+      } else {
+        if (!collision.checkPixelCollision(game.players[0].bitmap, game.players[1].bitmap, 0, true)) {
+          game.world.y -= 15;
+        }
+      }
+    }
+    if (game.players[0].actions.indexOf("runLeft") !== -1) {
+      if (game.players[0].bitmap.currentAnimation === "standd") {
+        game.players[0].bitmap.gotoAndPlay("runr_h");
+      }
+      if ((game.world.x + 15) > 0) {
+        game.players[0].bitmap.x -= 15;
+      } else if (game.players[0].bitmap.x !== window.innerWidth / 2) {
+        game.players[0].bitmap.x -= 15;
+      } else {
+        if (!collision.checkPixelCollision(game.players[0].bitmap, game.players[1].bitmap, 0, true)) {
+          game.world.x += 15;
+        }
+      }
+    }
+    if (game.players[0].actions.indexOf("runRight") !== -1) {
+      if (game.players[0].bitmap.currentAnimation === "standd") {
+        game.players[0].bitmap.gotoAndPlay("runr");
+      }
+      if ((game.world.x - 15) < (-40000 + window.innerWidth)) {
+        return game.players[0].bitmap.x += 15;
+      } else if (game.players[0].bitmap.x !== window.innerWidth / 2) {
+        return game.players[0].bitmap.x += 15;
+      } else {
+        if (!collision.checkPixelCollision(game.players[0].bitmap, game.players[1].bitmap, 0, true)) {
+          return game.world.x -= 15;
+        }
+      }
+    }
+  };
 
   return Player;
 
