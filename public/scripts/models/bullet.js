@@ -11,9 +11,14 @@ window.Bullet = (function(_super) {
     this.py = -game.world.y + game.players[0].bitmap.y;
     this.mx = -game.world.x + game.posx;
     this.my = -game.world.y + game.posy;
-    console.log(this.px, this.py, this.mx, this.my);
+    this.accuracy = .05;
+    this.direction = Math.atan2(this.mx - this.px, this.my - this.py) + (Math.random() * (this.accuracy * 2) - this.accuracy);
     this.shape = new createjs.Shape();
-    this.shape.graphics.beginFill("#FFFF00").drawRect(0, 0, 7, 4);
+    this.shape.rotation = -(this.direction * (180 / Math.PI) + 90);
+    this.shape.alpha = .75;
+    this.shape.graphics.beginFill("#FFFF00").drawRect(0, 0, 125, 2);
+    this.shape.regx = 100;
+    this.shape.regy = 1;
     this.shape.x = -game.world.x + game.players[0].bitmap.x;
     this.shape.y = -game.world.y + game.players[0].bitmap.y;
     game.world.addChild(this.shape);
@@ -21,8 +26,31 @@ window.Bullet = (function(_super) {
   }
 
   Bullet.move = function(bullet) {
-    bullet.shape.x += -(bullet.px - bullet.mx) / 10;
-    return bullet.shape.y += -(bullet.py - bullet.my) / 10;
+    var enemy, _i, _len, _ref;
+
+    if (!(!bullet || bullet.shape.x > (window.innerWidth - game.world.x) || bullet.shape.x < -game.world.x || bullet.shape.y > (window.innerHeight - game.world.y) || bullet.shape.y < -game.world.y)) {
+      _ref = game.enemies;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        enemy = _ref[_i];
+        if (enemy && collision.checkRectCollision(bullet.shape, enemy.bitmap, 0, true)) {
+          console.log("" + bullet.player.name + " shot " + enemy.name);
+          createjs.Sound.play("audio/impact.mp3");
+          if (enemy.health >= 1) {
+            enemy.health -= 5;
+          } else {
+            game.world.removeChild(enemy.bitmap);
+            game.enemies.splice(game.enemies.indexOf(enemy), 1);
+          }
+          game.bullets.splice(game.bullets.indexOf(bullet), 1);
+          game.world.removeChild(bullet.shape);
+        }
+      }
+      bullet.shape.x += Math.sin(bullet.direction) * 100;
+      return bullet.shape.y += Math.cos(bullet.direction) * 100;
+    } else if (bullet) {
+      game.world.removeChild(bullet.shape);
+      return game.bullets.splice(game.bullets.indexOf(bullet), 1);
+    }
   };
 
   return Bullet;

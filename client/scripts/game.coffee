@@ -11,14 +11,15 @@ class Game
     
     # Game music
     handleLoad = (event) ->
-      # instance = createjs.Sound.play "ragevalley"
-      # instance.setVolume(0.25);
+      instance = createjs.Sound.play "ragevalley"
+      instance.setVolume(0.15);
     createjs.Sound.addEventListener("fileload", handleLoad)
     createjs.Sound.registerSound("audio/rage.mp3", "ragevalley")
 
     # Players & bullets in the game
     @players = []
     @bullets = []
+    @enemies = []
 
     # Size the canvas
     resizeCanvas = =>
@@ -41,12 +42,15 @@ class Game
     window.addEventListener 'resize', resizeCanvas
 
     # Render loop
-    createjs.Ticker.setFPS 30
+    createjs.Ticker.setFPS 60
     createjs.Ticker.addEventListener "tick", =>
       Player.move()
       
       for bullet in @bullets
-        Bullet.move(bullet)
+        Bullet.move bullet
+      
+      for enemy in @enemies
+        Enemy.move enemy
     
       # Redraw
       @stage.update()
@@ -57,6 +61,15 @@ class Game
       createjs.Sound.play "/audio/reload.mp3"
 
     document.onmousedown = (e) =>
+      doMouse = (e) =>
+        if e.pageX || e.pageY
+          @posx = e.pageX;
+          @posy = e.pageY;
+        else if e.clientX || e.clientY
+          @posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft
+          @posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop
+      doMouse(e)
+
       switch e.which
         when 1
           if e.pageX || e.pageY
@@ -69,6 +82,9 @@ class Game
           Player.shoot("start") if @players[0].actions.indexOf("shoot") == -1
           @shootInstance = createjs.Sound.play("audio/smg.m4a", "none", 0, 0, -1)
           @players[0].actions.push("shoot")
+      
+      document.onmousemove = (e) =>
+        doMouse(e)
 
     document.onmouseup = (e) =>
       switch e.which

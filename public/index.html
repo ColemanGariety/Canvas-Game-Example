@@ -14,14 +14,23 @@
     <!-- Preload images -->
     <img src="images/grass.jpg" id="player">
     <img src="images/player.png" id="grass">
-    <audio><source src="audio/smg.m4a" /></audio>
+    <img src="images/corpse.png" id="grass">
+    <audio src="audio/smg.m4a"></audio>
+    <audio src="audio/impact.mp3"></audio>
 
+    <!-- Engine -->
 		<script src="/scripts/create.js"></script>
+		<script src="/scripts/boxblur.easel.js"></script>
 		<script src="/scripts/collisions.easel.js"></script>
 		<script src="/scripts/game.js"></script>
+		
+		<!-- Models -->
 		<script src="/scripts/models/continent.js"></script>
 		<script src="/scripts/models/player.js"></script>
 		<script src="/scripts/models/bullet.js"></script>
+		<script src="/scripts/models/enemy.js"></script>
+		
+		<!-- Start the game -->
 		<script src="/scripts/application.js"></script>
 	</body>
 </html>

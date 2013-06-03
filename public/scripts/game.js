@@ -10,11 +10,17 @@ Game = (function() {
     console.log("Started the game.");
     this.world = new createjs.Container();
     this.stage.addChild(this.world);
-    handleLoad = function(event) {};
+    handleLoad = function(event) {
+      var instance;
+
+      instance = createjs.Sound.play("ragevalley");
+      return instance.setVolume(0.15);
+    };
     createjs.Sound.addEventListener("fileload", handleLoad);
     createjs.Sound.registerSound("audio/rage.mp3", "ragevalley");
     this.players = [];
     this.bullets = [];
+    this.enemies = [];
     resizeCanvas = function() {
       _this.stage.canvas.width = window.innerWidth;
       _this.stage.canvas.height = window.innerHeight;
@@ -26,15 +32,20 @@ Game = (function() {
     };
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
-    createjs.Ticker.setFPS(30);
+    createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", function() {
-      var bullet, _i, _len, _ref;
+      var bullet, enemy, _i, _j, _len, _len1, _ref, _ref1;
 
       Player.move();
       _ref = _this.bullets;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         bullet = _ref[_i];
         Bullet.move(bullet);
+      }
+      _ref1 = _this.enemies;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        enemy = _ref1[_j];
+        Enemy.move(enemy);
       }
       return _this.stage.update();
     });
@@ -43,6 +54,18 @@ Game = (function() {
       return createjs.Sound.play("/audio/reload.mp3");
     };
     document.onmousedown = function(e) {
+      var doMouse;
+
+      doMouse = function(e) {
+        if (e.pageX || e.pageY) {
+          _this.posx = e.pageX;
+          return _this.posy = e.pageY;
+        } else if (e.clientX || e.clientY) {
+          _this.posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+          return _this.posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+        }
+      };
+      doMouse(e);
       switch (e.which) {
         case 1:
           if (e.pageX || e.pageY) {
@@ -56,8 +79,11 @@ Game = (function() {
             Player.shoot("start");
           }
           _this.shootInstance = createjs.Sound.play("audio/smg.m4a", "none", 0, 0, -1);
-          return _this.players[0].actions.push("shoot");
+          _this.players[0].actions.push("shoot");
       }
+      return document.onmousemove = function(e) {
+        return doMouse(e);
+      };
     };
     document.onmouseup = function(e) {
       switch (e.which) {

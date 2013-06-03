@@ -7,7 +7,7 @@ window.Player = (function(_super) {
 
   function Player(name, isPuppet) {
     this.name = name || "Anon";
-    console.log("" + this.name + " has joined.");
+    console.log("" + this.name + " has joined the struggle");
     this.isPuppet = isPuppet || false;
     this.spritesheet = new createjs.SpriteSheet({
       images: ["images/player.png"],
@@ -15,23 +15,23 @@ window.Player = (function(_super) {
       animations: {
         standd: {
           frames: [6, 7],
-          frequency: 10
+          frequency: 20
         },
         standu: {
           frames: [4, 5],
-          frequency: 10
+          frequency: 20
         },
         runu: {
           frames: [8, 9, 10, 11],
-          frequency: 3
+          frequency: 6
         },
         rund: {
-          frames: [12, 13, 14, 15],
-          frequency: 3
+          frames: [12, 13, 14, 9],
+          frequency: 6
         },
         runr: {
           frames: [0, 1, 2, 3],
-          frequency: 3
+          frequency: 6
         }
       }
     });
@@ -41,8 +41,8 @@ window.Player = (function(_super) {
       this.bitmap.x = window.innerWidth / 2;
       this.bitmap.y = window.innerHeight / 2;
     } else {
-      this.bitmap.x = window.innerWidth / 2 + 100;
-      this.bitmap.y = window.innerHeight / 2 + 100;
+      this.bitmap.x = window.innerWidth / 2 + (Math.random() * (300 * 2) - 300);
+      this.bitmap.y = window.innerHeight / 2 + (Math.random() * (300 * 2) - 300);
     }
     this.bitmap.gotoAndPlay("standd");
     this.actions = [];
@@ -60,7 +60,7 @@ window.Player = (function(_super) {
         var bullet;
 
         return bullet = new Bullet();
-      }, 10);
+      }, 60);
     } else if (command === "stop") {
       return clearInterval(game.players[0].bulletInterval);
     }
@@ -71,56 +71,48 @@ window.Player = (function(_super) {
       if (game.players[0].bitmap.currentAnimation === "standd") {
         game.players[0].bitmap.gotoAndPlay("runu");
       }
-      if ((game.world.y + 15) > 0) {
-        game.players[0].bitmap.y -= 15;
+      if ((game.world.y + 9) > 0) {
+        game.players[0].bitmap.y -= 9;
       } else if (game.players[0].bitmap.y !== window.innerHeight / 2) {
-        game.players[0].bitmap.y -= 15;
+        game.players[0].bitmap.y -= 9;
       } else {
-        if (!collision.checkPixelCollision(game.players[0].bitmap, game.players[1].bitmap, 0, true)) {
-          game.world.y += 15;
-        }
+        game.world.y += 9;
       }
     }
     if (game.players[0].actions.indexOf("runDown") !== -1) {
       if (game.players[0].bitmap.currentAnimation === "standd") {
         game.players[0].bitmap.gotoAndPlay("rund");
       }
-      if ((game.world.y - 15) < (-40000 + window.innerWidth)) {
-        game.players[0].bitmap.y += 15;
+      if ((game.world.y - 9) < (-40000 + window.innerWidth)) {
+        game.players[0].bitmap.y += 9;
       } else if (game.players[0].bitmap.y !== window.innerHeight / 2) {
-        game.players[0].bitmap.y += 15;
+        game.players[0].bitmap.y += 9;
       } else {
-        if (!collision.checkPixelCollision(game.players[0].bitmap, game.players[1].bitmap, 0, true)) {
-          game.world.y -= 15;
-        }
+        game.world.y -= 9;
       }
     }
     if (game.players[0].actions.indexOf("runLeft") !== -1) {
       if (game.players[0].bitmap.currentAnimation === "standd") {
         game.players[0].bitmap.gotoAndPlay("runr_h");
       }
-      if ((game.world.x + 15) > 0) {
-        game.players[0].bitmap.x -= 15;
+      if ((game.world.x + 9) > 0) {
+        game.players[0].bitmap.x -= 9;
       } else if (game.players[0].bitmap.x !== window.innerWidth / 2) {
-        game.players[0].bitmap.x -= 15;
+        game.players[0].bitmap.x -= 9;
       } else {
-        if (!collision.checkPixelCollision(game.players[0].bitmap, game.players[1].bitmap, 0, true)) {
-          game.world.x += 15;
-        }
+        game.world.x += 9;
       }
     }
     if (game.players[0].actions.indexOf("runRight") !== -1) {
       if (game.players[0].bitmap.currentAnimation === "standd") {
         game.players[0].bitmap.gotoAndPlay("runr");
       }
-      if ((game.world.x - 15) < (-40000 + window.innerWidth)) {
-        return game.players[0].bitmap.x += 15;
+      if ((game.world.x - 9) < (-40000 + window.innerWidth)) {
+        return game.players[0].bitmap.x += 9;
       } else if (game.players[0].bitmap.x !== window.innerWidth / 2) {
-        return game.players[0].bitmap.x += 15;
+        return game.players[0].bitmap.x += 9;
       } else {
-        if (!collision.checkPixelCollision(game.players[0].bitmap, game.players[1].bitmap, 0, true)) {
-          return game.world.x -= 15;
-        }
+        return game.world.x -= 9;
       }
     }
   };

@@ -11,4 +11,4 @@ class window.Continent extends Game
     @shape = new createjs.Shape()
     @shape.graphics.beginBitmapFill(@bitmap, "repeat").drawRect(0, 0, 40000, 40000)
 
-    game.world.addChild(@shape);
+    game.world.addChild(@shape)
