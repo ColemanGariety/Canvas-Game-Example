@@ -1,25 +1,40 @@
 # Wait for resources to load
-class Game
+class window.Game
   constructor: (canvasId) ->
     # Start the game
     @stage = new createjs.Stage canvasId
-    console.log "Started the game."
+    console.log "Started the game"
 
     # Initialize the world
     @world = new createjs.Container()
     @stage.addChild(@world)
     
     # Game music
-    handleLoad = (event) ->
+    handleLoad = (e) ->
       instance = createjs.Sound.play "ragevalley"
-      instance.setVolume(0.15);
+      instance.setVolume 0.25
     createjs.Sound.addEventListener("fileload", handleLoad)
-    createjs.Sound.registerSound("audio/rage.mp3", "ragevalley")
+    createjs.Sound.registerSound("music/sleaze.m4a", "ragevalley")
 
     # Players & bullets in the game
     @players = []
     @bullets = []
     @enemies = []
+    @drops   = []
+
+    # Render loop
+    createjs.Ticker.setFPS 60
+    createjs.Ticker.addEventListener "tick", =>
+      Player.move()
+      
+      for bullet in @bullets
+        Bullet.move bullet
+      
+      for enemy in @enemies
+        Enemy.move enemy
+    
+      # Redraw
+      @stage.update()
 
     # Size the canvas
     resizeCanvas = =>
@@ -41,59 +56,33 @@ class Game
     resizeCanvas()
     window.addEventListener 'resize', resizeCanvas
 
-    # Render loop
-    createjs.Ticker.setFPS 60
-    createjs.Ticker.addEventListener "tick", =>
-      Player.move()
-      
-      for bullet in @bullets
-        Bullet.move bullet
-      
-      for enemy in @enemies
-        Enemy.move enemy
+    # User input
+    document.onmousemove = (e) =>
+      @mouseX = e.clientX
+      @mouseY = e.clientY
     
-      # Redraw
-      @stage.update()
-
-    # Weapon controls
     document.oncontextmenu = (e) =>
       e.preventDefault()
-      createjs.Sound.play "/audio/reload.mp3"
+      createjs.Sound.play "/audio/reload.m4a"
+      unless @players[0].ammo.machinegun == 100 || !@players[0].cartridges.machinegun
+        @players[0].ammo.machinegun = 100 
+        @players[0].cartridges.machinegun--
+      
+      Hud.update("ammo")
 
     document.onmousedown = (e) =>
-      doMouse = (e) =>
-        if e.pageX || e.pageY
-          @posx = e.pageX;
-          @posy = e.pageY;
-        else if e.clientX || e.clientY
-          @posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft
-          @posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop
-      doMouse(e)
-
       switch e.which
         when 1
-          if e.pageX || e.pageY
-            @posx = e.pageX;
-            @posy = e.pageY;
-          else if e.clientX || e.clientY
-            @posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft
-            @posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop
           
           Player.shoot("start") if @players[0].actions.indexOf("shoot") == -1
-          @shootInstance = createjs.Sound.play("audio/smg.m4a", "none", 0, 0, -1)
           @players[0].actions.push("shoot")
-      
-      document.onmousemove = (e) =>
-        doMouse(e)
 
     document.onmouseup = (e) =>
       switch e.which
         when 1
           Player.shoot("stop")
-          @shootInstance.stop("audio/smg.m4a", "none", 0, 0, 0)
           @players[0].actions.splice(@players[0].actions.indexOf("shoot"), 1)
 
-    # Movement controls
     document.onkeydown = (e) =>
       switch e.which
         when 87 then @players[0].actions.push("runUp") unless @players[0].actions.indexOf("runUp") != -1
@@ -107,6 +96,3 @@ class Game
         when 83 then @players[0].actions.splice(@players[0].actions.indexOf("runDown"), 1); @players[0].bitmap.gotoAndPlay("standd")
         when 65 then @players[0].actions.splice(@players[0].actions.indexOf("runLeft"), 1); @players[0].bitmap.gotoAndPlay("standd")
         when 68 then @players[0].actions.splice(@players[0].actions.indexOf("runRight"), 1); @players[0].bitmap.gotoAndPlay("standd")
-
-# ?
-if window? then window.Game = Game else if module?.exports? then module.exports = Game

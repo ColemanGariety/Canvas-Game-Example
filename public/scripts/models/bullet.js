@@ -7,10 +7,13 @@ window.Bullet = (function(_super) {
 
   function Bullet(player) {
     this.player = player || game.players[0];
+    this.player.ammo.machinegun--;
+    Hud.update("ammo");
+    this.shootInstance = createjs.Sound.play("audio/smg.m4a", "none", 0, 0, 0);
     this.px = -game.world.x + game.players[0].bitmap.x;
     this.py = -game.world.y + game.players[0].bitmap.y;
-    this.mx = -game.world.x + game.posx;
-    this.my = -game.world.y + game.posy;
+    this.mx = -game.world.x + game.mouseX;
+    this.my = -game.world.y + game.mouseY;
     this.accuracy = .05;
     this.direction = Math.atan2(this.mx - this.px, this.my - this.py) + (Math.random() * (this.accuracy * 2) - this.accuracy);
     this.shape = new createjs.Shape();
@@ -26,20 +29,25 @@ window.Bullet = (function(_super) {
   }
 
   Bullet.move = function(bullet) {
-    var enemy, _i, _len, _ref;
+    var enemy, impactInstance, _i, _len, _ref;
 
     if (!(!bullet || bullet.shape.x > (window.innerWidth - game.world.x) || bullet.shape.x < -game.world.x || bullet.shape.y > (window.innerHeight - game.world.y) || bullet.shape.y < -game.world.y)) {
       _ref = game.enemies;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         enemy = _ref[_i];
         if (enemy && collision.checkRectCollision(bullet.shape, enemy.bitmap, 0, true)) {
-          console.log("" + bullet.player.name + " shot " + enemy.name);
-          createjs.Sound.play("audio/impact.mp3");
+          enemy.bitmap.x += Math.sin(bullet.direction) * 4;
+          enemy.bitmap.y += Math.cos(bullet.direction) * 4;
+          enemy.pause();
+          impactInstance = createjs.Sound.play("audio/impact.m4a");
+          impactInstance.setVolume(.25);
           if (enemy.health >= 1) {
-            enemy.health -= 5;
+            enemy.health -= 10;
           } else {
+            console.log("" + bullet.player.name + " killed " + enemy.name);
             game.world.removeChild(enemy.bitmap);
             game.enemies.splice(game.enemies.indexOf(enemy), 1);
+            new Drop(enemy);
           }
           game.bullets.splice(game.bullets.indexOf(bullet), 1);
           game.world.removeChild(bullet.shape);

@@ -52,11 +52,15 @@ a:link, a:visited, a:hover, a:active {
   text-decoration: inherit; }
 
 html, body {
-  overflow: hidden; }
+  overflow: hidden;
+  cursor: default;
+}
 
 canvas {
   -webkit-transform: translateZ(0);
-  vertical-align: top; }
+  vertical-align: top;
+  cursor: default;
+}
 
 img {
   display: none; }

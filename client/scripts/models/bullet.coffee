@@ -2,10 +2,15 @@ class window.Bullet extends Player
   constructor: (player) ->
     @player = player || game.players[0]
     
+    @player.ammo.machinegun--
+    Hud.update("ammo")
+    
+    @shootInstance = createjs.Sound.play("audio/smg.m4a", "none", 0, 0, 0)
+    
     @px = -game.world.x + game.players[0].bitmap.x
     @py = -game.world.y + game.players[0].bitmap.y
-    @mx = -game.world.x + game.posx
-    @my = -game.world.y + game.posy
+    @mx = -game.world.x + game.mouseX
+    @my = -game.world.y + game.mouseY
     
     @accuracy = .05
     
@@ -31,16 +36,23 @@ class window.Bullet extends Player
     unless !bullet || bullet.shape.x > (window.innerWidth - game.world.x) || bullet.shape.x < -game.world.x || bullet.shape.y > (window.innerHeight - game.world.y) || bullet.shape.y < -game.world.y
       for enemy in game.enemies
         if enemy && collision.checkRectCollision(bullet.shape, enemy.bitmap, 0, true)
-          console.log "#{bullet.player.name} shot #{enemy.name}"
+          
+          # Slow down
+          enemy.bitmap.x += Math.sin(bullet.direction) * 4
+          enemy.bitmap.y += Math.cos(bullet.direction) * 4
+          enemy.pause()
           
           # Impact sound
-          createjs.Sound.play "audio/impact.mp3"
+          impactInstance = createjs.Sound.play "audio/impact.m4a"
+          impactInstance.setVolume .25
           
           if enemy.health >= 1
-            enemy.health -= 5
+            enemy.health -= 10
           else
+            console.log "#{bullet.player.name} killed #{enemy.name}"
             game.world.removeChild enemy.bitmap
             game.enemies.splice(game.enemies.indexOf(enemy), 1)
+            new Drop(enemy)
 
           game.bullets.splice(game.bullets.indexOf(bullet), 1)
           game.world.removeChild bullet.shape

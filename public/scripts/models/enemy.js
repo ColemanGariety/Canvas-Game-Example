@@ -5,45 +5,56 @@ var __hasProp = {}.hasOwnProperty,
 window.Enemy = (function(_super) {
   __extends(Enemy, _super);
 
-  function Enemy(name, health, type) {
+  Enemy.spritesheet = new createjs.SpriteSheet({
+    images: ["images/corpse.png"],
+    frames: [[0, 128, 128, 128, 0, 64, 64], [128, 128, 128, 128, 0, 64, 64], [256, 128, 128, 128, 0, 64, 64], [384, 128, 128, 128, 0, 64, 64], [0, 640, 128, 128, 0, 64, 64], [128, 640, 128, 128, 0, 64, 64], [0, 1024, 128, 128, 0, 64, 64], [128, 1024, 128, 128, 0, 64, 64], [0, 512, 128, 128, 0, 64, 64], [128, 512, 128, 128, 0, 64, 64], [256, 512, 128, 128, 0, 64, 64], [384, 512, 128, 128, 0, 64, 64], [0, 896, 128, 128, 0, 64, 64], [128, 896, 128, 128, 0, 64, 64], [256, 896, 128, 128, 0, 64, 64], [384, 896, 128, 128, 0, 64, 64]],
+    animations: {
+      standd: {
+        frames: [6, 7],
+        frequency: 75
+      },
+      standu: {
+        frames: [4, 5],
+        frequency: 75
+      },
+      runu: {
+        frames: [8, 9, 10, 11],
+        frequency: 50
+      },
+      rund: {
+        frames: [12, 13, 14, 15],
+        frequency: 50
+      },
+      runr: {
+        frames: [0, 1, 2, 3],
+        frequency: 50
+      }
+    }
+  });
+
+  createjs.SpriteSheetUtils.addFlippedFrames(Enemy.spritesheet, true);
+
+  function Enemy(name, health, type, walker) {
+    var _this = this;
+
     if (name) {
       this.name = "" + name + "'s Corpse";
     } else {
-      this.name = "A Buried Corpse";
+      this.name = "A Corpse";
     }
+    this.pause = function() {
+      _this.walker = false;
+      return setTimeout(function() {
+        return _this.walker = true;
+      }, 2000);
+    };
+    this.walker = true;
     this.health = health || 100;
     this.type = type || "corpse";
     console.log("" + this.name + " gets up and moves");
-    this.spritesheet = new createjs.SpriteSheet({
-      images: ["images/corpse.png"],
-      frames: [[0, 111, 111, 111, 0, 55, 55], [111, 111, 111, 111, 0, 55, 55], [222, 111, 111, 111, 0, 55, 55], [333, 111, 111, 111, 0, 55, 55], [0, 555, 111, 111, 0, 55, 55], [111, 555, 111, 111, 0, 55, 55], [0, 888, 111, 111, 0, 55, 55], [111, 888, 111, 111, 0, 55, 55], [0, 444, 111, 111, 0, 55, 55], [111, 444, 111, 111, 0, 55, 55], [222, 444, 111, 111, 0, 55, 55], [333, 444, 111, 111, 0, 55, 55], [0, 777, 111, 111, 0, 55, 55], [111, 777, 111, 111, 0, 55, 55], [222, 777, 111, 111, 0, 55, 55], [333, 777, 111, 111, 0, 55, 55]],
-      animations: {
-        standd: {
-          frames: [6, 7],
-          frequency: 20
-        },
-        standu: {
-          frames: [4, 5],
-          frequency: 20
-        },
-        runu: {
-          frames: [8, 9, 10, 11],
-          frequency: 6
-        },
-        rund: {
-          frames: [12, 13, 14, 15],
-          frequency: 6
-        },
-        runr: {
-          frames: [0, 1, 2, 3],
-          frequency: 6
-        }
-      }
-    });
-    createjs.SpriteSheetUtils.addFlippedFrames(this.spritesheet, true);
-    this.bitmap = new createjs.BitmapAnimation(this.spritesheet);
-    this.bitmap.x = window.innerWidth / 2 + (Math.random() * (300 * 2) - 300);
-    this.bitmap.y = window.innerHeight / 2 + (Math.random() * (300 * 2) - 300);
+    this.bitmap = new createjs.BitmapAnimation(Enemy.spritesheet);
+    this.bitmap.x = Math.floor(Math.random() * (4000 - 0 + 1)) + 0;
+    this.bitmap.y = Math.floor(Math.random() * (4000 - 0 + 1)) + 0;
     this.bitmap.gotoAndPlay("standd");
     this.actions = [];
     game.world.addChild(this.bitmap);
@@ -51,15 +62,36 @@ window.Enemy = (function(_super) {
   }
 
   Enemy.move = function(enemy) {
-    var direction, ex, ey, px, py;
+    var ex, ey, px, py, x, y;
 
-    px = -game.world.x + game.players[0].bitmap.x;
-    py = -game.world.y + game.players[0].bitmap.y;
-    ex = enemy.bitmap.x;
-    ey = enemy.bitmap.y;
-    direction = Math.atan2(px - ex, py - ey);
-    enemy.bitmap.x += Math.sin(direction) / 2;
-    return enemy.bitmap.y += Math.cos(direction) / 2;
+    if (enemy.walker === true) {
+      px = -game.world.x + game.players[0].bitmap.x;
+      py = -game.world.y + game.players[0].bitmap.y;
+      ex = enemy.bitmap.x;
+      ey = enemy.bitmap.y;
+      enemy.direction = Math.atan2(px - ex, py - ey);
+      x = Math.sin(enemy.direction) / 2;
+      y = Math.cos(enemy.direction) / 2;
+      enemy.bitmap.x += x;
+      enemy.bitmap.y += y;
+      if (enemy.direction > 2.5 || enemy.direction < -2.5) {
+        if (enemy.bitmap.currentAnimation !== "runu") {
+          return enemy.bitmap.gotoAndPlay("runu");
+        }
+      } else if (enemy.direction > .75) {
+        if (enemy.bitmap.currentAnimation !== "runr") {
+          return enemy.bitmap.gotoAndPlay("runr");
+        }
+      } else if (enemy.direction > -.75) {
+        if (enemy.bitmap.currentAnimation !== "rund") {
+          return enemy.bitmap.gotoAndPlay("rund");
+        }
+      } else {
+        if (enemy.bitmap.currentAnimation !== "runr_h") {
+          return enemy.bitmap.gotoAndPlay("runr_h");
+        }
+      }
+    }
   };
 
   return Enemy;

@@ -2,10 +2,15 @@
 game = new Game("gameCanvas")
 
 # Adds some stuff to mess around with
-new Continent()
 new Player("Jackson", true)
+new Hud()
+new Continent()
 
 # Spawner
-enemySpawner = setInterval ->
-  new Enemy()
-, (Math.random() * (5000) + 1500)
+spawner = ->
+  new Enemy() if game.enemies.length < 100
+  setTimeout ->
+    spawner()
+  , Math.random() * 1000
+
+spawner()

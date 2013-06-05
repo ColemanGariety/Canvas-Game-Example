@@ -1,59 +1,68 @@
 class window.Enemy extends Game
-  constructor: (name, health, type) ->
+  @spritesheet = new createjs.SpriteSheet(
+    images: ["images/corpse.png"]
+    frames: [
+      [0, 128, 128, 128, 0, 64, 64],
+      [128, 128, 128, 128, 0, 64, 64],
+      [256, 128, 128, 128, 0, 64, 64],
+      [384, 128, 128, 128, 0, 64, 64],
+      [0, 640, 128, 128, 0, 64, 64],
+      [128, 640, 128, 128, 0, 64, 64],
+      [0, 1024, 128, 128, 0, 64, 64],
+      [128, 1024, 128, 128, 0, 64, 64],
+      [0, 512, 128, 128, 0, 64, 64],
+      [128, 512, 128, 128, 0, 64, 64],
+      [256, 512, 128, 128, 0, 64, 64],
+      [384, 512, 128, 128, 0, 64, 64],
+      [0, 896, 128, 128, 0, 64, 64],
+      [128, 896, 128, 128, 0, 64, 64],
+      [256, 896, 128, 128, 0, 64, 64],
+      [384, 896, 128, 128, 0, 64, 64]
+    ]
+    animations:
+      standd:
+        frames: [6, 7]
+        frequency: 75
+      standu:
+        frames: [4, 5]
+        frequency: 75
+      runu:
+        frames: [8, 9, 10, 11]
+        frequency: 50
+      rund:
+        frames: [12, 13, 14, 15]
+        frequency: 50
+      runr:
+        frames: [0, 1, 2, 3]
+        frequency: 50
+  )
+
+  createjs.SpriteSheetUtils.addFlippedFrames(Enemy.spritesheet, true)
+
+  constructor: (name, health, type, walker) ->
     if name
       @name = "#{name}'s Corpse"
     else
-      @name = "A Buried Corpse"
+      @name = "A Corpse"
+    
+    @pause = =>
+      @walker = false
+      # @bitmap.gotoAndPlay("standd")
+      setTimeout =>
+        @walker = true
+      , 2000
+    
+    @walker = true
     
     @health = health || 100
     @type = type || "corpse"
     
     console.log "#{@name} gets up and moves"
-    
-    @spritesheet = new createjs.SpriteSheet(
-      images: ["images/corpse.png"]
-      frames: [
-        [0, 111, 111, 111, 0, 55, 55],
-        [111, 111, 111, 111, 0, 55, 55],
-        [222, 111, 111, 111, 0, 55, 55],
-        [333, 111, 111, 111, 0, 55, 55],
-        [0, 555, 111, 111, 0, 55, 55],
-        [111, 555, 111, 111, 0, 55, 55],
-        [0, 888, 111, 111, 0, 55, 55],
-        [111, 888, 111, 111, 0, 55, 55],
-        [0, 444, 111, 111, 0, 55, 55],
-        [111, 444, 111, 111, 0, 55, 55],
-        [222, 444, 111, 111, 0, 55, 55],
-        [333, 444, 111, 111, 0, 55, 55],
-        [0, 777, 111, 111, 0, 55, 55],
-        [111, 777, 111, 111, 0, 55, 55],
-        [222, 777, 111, 111, 0, 55, 55],
-        [333, 777, 111, 111, 0, 55, 55]
-      ]
-      animations:
-        standd:
-          frames: [6, 7]
-          frequency: 20
-        standu:
-          frames: [4, 5]
-          frequency: 20
-        runu:
-          frames: [8, 9, 10, 11]
-          frequency: 6
-        rund:
-          frames: [12, 13, 14, 15]
-          frequency: 6
-        runr:
-          frames: [0, 1, 2, 3]
-          frequency: 6
-    )
 
-    createjs.SpriteSheetUtils.addFlippedFrames(@spritesheet, true)
+    @bitmap = new createjs.BitmapAnimation(Enemy.spritesheet)
 
-    @bitmap = new createjs.BitmapAnimation(@spritesheet)
-
-    @bitmap.x = window.innerWidth / 2 + (Math.random() * (300 * 2) - 300)
-    @bitmap.y = window.innerHeight / 2 + (Math.random() * (300 * 2) - 300)
+    @bitmap.x = Math.floor(Math.random() * (4000 - 0 + 1)) + 0
+    @bitmap.y = Math.floor(Math.random() * (4000 - 0 + 1)) + 0
 
     @bitmap.gotoAndPlay("standd")
 
@@ -63,12 +72,27 @@ class window.Enemy extends Game
     game.enemies.push(@)
     
   @move = (enemy) ->
-    px = -game.world.x + game.players[0].bitmap.x
-    py = -game.world.y + game.players[0].bitmap.y
-    ex = enemy.bitmap.x
-    ey = enemy.bitmap.y
-    
-    direction = Math.atan2(px - ex, py - ey)
+  
+    if enemy.walker == true
+      px = -game.world.x + game.players[0].bitmap.x
+      py = -game.world.y + game.players[0].bitmap.y
+      ex = enemy.bitmap.x
+      ey = enemy.bitmap.y
+      
+      enemy.direction = Math.atan2(px - ex, py - ey)
+  
+      x = Math.sin(enemy.direction) / 2
+      y = Math.cos(enemy.direction) / 2
+  
+      enemy.bitmap.x += x
+      enemy.bitmap.y += y
+      
 
-    enemy.bitmap.x += Math.sin(direction) / 2
-    enemy.bitmap.y += Math.cos(direction) / 2
+      if enemy.direction > 2.5 || enemy.direction < -2.5
+        enemy.bitmap.gotoAndPlay("runu") unless enemy.bitmap.currentAnimation == "runu"
+      else if enemy.direction > .75
+        enemy.bitmap.gotoAndPlay("runr") unless enemy.bitmap.currentAnimation == "runr"
+      else if enemy.direction > -.75
+        enemy.bitmap.gotoAndPlay("rund") unless enemy.bitmap.currentAnimation == "rund"
+      else
+        enemy.bitmap.gotoAndPlay("runr_h") unless enemy.bitmap.currentAnimation == "runr_h"
