@@ -51,8 +51,33 @@ class window.Enemy extends Game
       setTimeout =>
         @walker = true
       , 2000
-    
+
+    @destroy = =>
+      game.world.removeChild @bitmap
+      game.enemies.remove(@)
+
     @walker = true
+    
+    @hurt = (bullet) =>
+      # Slow down
+      @bitmap.x += Math.sin(bullet.direction) * 4
+      @bitmap.y += Math.cos(bullet.direction) * 4
+      @pause()
+      
+      # Impact sound
+      impactInstance = createjs.Sound.play "audio/impact.m4a"
+      impactInstance.setVolume .25
+      
+      if @health >= 1
+        @health -= 10
+      else
+        @.kill(bullet)
+      
+    @kill = (bullet) =>
+      console.log "#{bullet.player.name} killed #{@.name}"
+      game.world.removeChild @.bitmap
+      game.enemies.remove(@)
+      new Drop(@)
     
     @health = health || 100
     @type = type || "corpse"

@@ -74,7 +74,7 @@ window.Game = (function() {
       switch (e.which) {
         case 1:
           Player.shoot("stop");
-          return _this.players[0].actions.splice(_this.players[0].actions.indexOf("shoot"), 1);
+          return _this.players[0].actions.remove("shoot");
       }
     };
     document.onkeydown = function(e) {
@@ -103,17 +103,19 @@ window.Game = (function() {
     document.onkeyup = function(e) {
       switch (e.which) {
         case 87:
-          _this.players[0].actions.splice(_this.players[0].actions.indexOf("runUp"), 1);
+          _this.players[0].actions.remove("runUp");
           return _this.players[0].bitmap.gotoAndPlay("standd");
         case 83:
-          _this.players[0].actions.splice(_this.players[0].actions.indexOf("runDown"), 1);
+          _this.players[0].actions.remove("runDown");
           return _this.players[0].bitmap.gotoAndPlay("standd");
         case 65:
-          _this.players[0].actions.splice(_this.players[0].actions.indexOf("runLeft"), 1);
+          _this.players[0].actions.remove("runLeft");
           return _this.players[0].bitmap.gotoAndPlay("standd");
         case 68:
-          _this.players[0].actions.splice(_this.players[0].actions.indexOf("runRight"), 1);
+          _this.players[0].actions.remove("runRight");
           return _this.players[0].bitmap.gotoAndPlay("standd");
+        case 70:
+          return new Bullet(game.players[0], "grenade");
       }
     };
   }

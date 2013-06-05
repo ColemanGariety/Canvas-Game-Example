@@ -1,16 +1,16 @@
 class window.Hud extends Game
   constructor: ->
     # Ammo
-    @ammo = new createjs.Text String(game.players[0].ammo.machinegun), "20px Arial", "#FFF"
+    @ammo = new createjs.Text String(game.players[0].ammo.machinegun), "60px Arial", "#FFF"
     @ammo.textBaseline = "alphabetic"
-    @ammo.x = 50
-    @ammo.y = 50
+    @ammo.x = 20
+    @ammo.y = 70
     
     # Ammo available
-    @cartridges = new createjs.Text String(game.players[0].cartridges.machinegun), "20px Arial", "#FFF"
+    @cartridges = new createjs.Text String(game.players[0].cartridges.machinegun), "60px Arial", "#FFF"
     @cartridges.textBaseline = "alphabetic"
-    @cartridges.x = 100
-    @cartridges.y = 50
+    @cartridges.x = 150
+    @cartridges.y = 70
     
     # Save dat shit
     game.hud = @

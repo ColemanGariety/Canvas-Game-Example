@@ -3,8 +3,8 @@ class window.Drop
     switch dropper.type
       when "corpse"
         drops = [
-          { name: "Machinegun Cartridge", probability: .1  }
-          { name: "dollars", probability: .2  }
+          { name: "Machinegun Cartridge", probability: .15  }
+          { name: "dollars", probability: .3  }
         ]
     
     drops.sort (a, b) ->

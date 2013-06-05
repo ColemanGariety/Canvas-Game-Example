@@ -81,7 +81,7 @@ class window.Game
       switch e.which
         when 1
           Player.shoot("stop")
-          @players[0].actions.splice(@players[0].actions.indexOf("shoot"), 1)
+          @players[0].actions.remove("shoot")
 
     document.onkeydown = (e) =>
       switch e.which
@@ -92,7 +92,8 @@ class window.Game
 
     document.onkeyup = (e) =>
       switch e.which
-        when 87 then @players[0].actions.splice(@players[0].actions.indexOf("runUp"), 1); @players[0].bitmap.gotoAndPlay("standd")
-        when 83 then @players[0].actions.splice(@players[0].actions.indexOf("runDown"), 1); @players[0].bitmap.gotoAndPlay("standd")
-        when 65 then @players[0].actions.splice(@players[0].actions.indexOf("runLeft"), 1); @players[0].bitmap.gotoAndPlay("standd")
-        when 68 then @players[0].actions.splice(@players[0].actions.indexOf("runRight"), 1); @players[0].bitmap.gotoAndPlay("standd")
+        when 87 then @players[0].actions.remove("runUp"); @players[0].bitmap.gotoAndPlay("standd")
+        when 83 then @players[0].actions.remove("runDown"); @players[0].bitmap.gotoAndPlay("standd")
+        when 65 then @players[0].actions.remove("runLeft"); @players[0].bitmap.gotoAndPlay("standd")
+        when 68 then @players[0].actions.remove("runRight"); @players[0].bitmap.gotoAndPlay("standd")
+        when 70 then  new Bullet(game.players[0], "grenade")

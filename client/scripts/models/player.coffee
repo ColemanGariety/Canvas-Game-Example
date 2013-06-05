@@ -87,7 +87,7 @@ class window.Player extends Game
       if game.players[0].ammo.machinegun
         game.players[0].bulletInterval = setInterval ->
           if game.players[0].ammo.machinegun
-            bullet = new Bullet()
+            bullet = new Bullet(game.players[0], "machinegun")
           else
             clearInterval(game.players[0].bulletInterval)
             createjs.Sound.play "audio/dry.m4a"

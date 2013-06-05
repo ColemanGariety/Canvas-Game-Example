@@ -1,3 +1,14 @@
+# Extend arrays
+Array::remove = ->
+  what = undefined
+  a = arguments
+  L = a.length
+  ax = undefined
+  while L and @length
+    what = a[--L]
+    @splice ax, 1  while (ax = @indexOf(what)) isnt -1
+  this
+
 # Start the game
 game = new Game("gameCanvas")
 

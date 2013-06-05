@@ -48,7 +48,31 @@ window.Enemy = (function(_super) {
         return _this.walker = true;
       }, 2000);
     };
+    this.destroy = function() {
+      game.world.removeChild(_this.bitmap);
+      return game.enemies.remove(_this);
+    };
     this.walker = true;
+    this.hurt = function(bullet) {
+      var impactInstance;
+
+      _this.bitmap.x += Math.sin(bullet.direction) * 4;
+      _this.bitmap.y += Math.cos(bullet.direction) * 4;
+      _this.pause();
+      impactInstance = createjs.Sound.play("audio/impact.m4a");
+      impactInstance.setVolume(.25);
+      if (_this.health >= 1) {
+        return _this.health -= 10;
+      } else {
+        return _this.kill(bullet);
+      }
+    };
+    this.kill = function(bullet) {
+      console.log("" + bullet.player.name + " killed " + _this.name);
+      game.world.removeChild(_this.bitmap);
+      game.enemies.remove(_this);
+      return new Drop(_this);
+    };
     this.health = health || 100;
     this.type = type || "corpse";
     console.log("" + this.name + " gets up and moves");

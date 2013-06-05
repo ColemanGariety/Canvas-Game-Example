@@ -8,10 +8,10 @@ window.Drop = (function() {
         drops = [
           {
             name: "Machinegun Cartridge",
-            probability: .1
+            probability: .15
           }, {
             name: "dollars",
-            probability: .2
+            probability: .3
           }
         ];
     }

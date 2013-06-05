@@ -6,14 +6,14 @@ window.Hud = (function(_super) {
   __extends(Hud, _super);
 
   function Hud() {
-    this.ammo = new createjs.Text(String(game.players[0].ammo.machinegun), "20px Arial", "#FFF");
+    this.ammo = new createjs.Text(String(game.players[0].ammo.machinegun), "60px Arial", "#FFF");
     this.ammo.textBaseline = "alphabetic";
-    this.ammo.x = 50;
-    this.ammo.y = 50;
-    this.cartridges = new createjs.Text(String(game.players[0].cartridges.machinegun), "20px Arial", "#FFF");
+    this.ammo.x = 20;
+    this.ammo.y = 70;
+    this.cartridges = new createjs.Text(String(game.players[0].cartridges.machinegun), "60px Arial", "#FFF");
     this.cartridges.textBaseline = "alphabetic";
-    this.cartridges.x = 100;
-    this.cartridges.y = 50;
+    this.cartridges.x = 150;
+    this.cartridges.y = 70;
     game.hud = this;
     game.stage.addChild(game.hud.ammo, game.hud.cartridges);
   }

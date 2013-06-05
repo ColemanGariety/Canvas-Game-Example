@@ -76,7 +76,7 @@ window.Player = (function(_super) {
           var bullet;
 
           if (game.players[0].ammo.machinegun) {
-            return bullet = new Bullet();
+            return bullet = new Bullet(game.players[0], "machinegun");
           } else {
             clearInterval(game.players[0].bulletInterval);
             return createjs.Sound.play("audio/dry.m4a");
